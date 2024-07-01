@@ -1,16 +1,33 @@
-# base image
-FROM alpine:3.17
+# # base image
+# FROM alpine:3.17
 
-# install dependency tools
-RUN apk add --no-cache net-tools iptables iproute2 wget curl bash
+# # install dependency tools
+# RUN apk add --no-cache net-tools iptables iproute2 wget curl bash git
 
-RUN mkdir -p nargo/bin
+# # RUN curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash && \
+# #     /bin/bash -c "source ~/.profile && noirup"
+# RUN mkdir -p nargo/bin
     
-RUN curl -o nargo/bin/nargo-x86_64-unknown-linux-musl.tar.gz -L https://github.com/noir-lang/noir/releases/download/v0.10.0/nargo-x86_64-unknown-linux-musl.tar.gz
+# RUN curl -o nargo/bin/nargo-x86_64-unknown-linux-musl.tar.gz -L https://github.com/noir-lang/noir/releases/download/v0.30.0/nargo-x86_64-unknown-linux-musl.tar.gz
  
-RUN tar -xvf nargo/bin/nargo-x86_64-unknown-linux-musl.tar.gz -C nargo/bin/
+# RUN tar -xvf nargo/bin/nargo-x86_64-unknown-linux-musl.tar.gz -C nargo/bin/
+# Use an Ubuntu base image
+FROM ubuntu:22.04
 
-ENV PATH="$PATH:/nargo/bin"
+# Install dependency tools
+RUN apt-get update && apt-get install -y \
+    net-tools iptables iproute2 wget bash git curl \
+    libc++1 libc++abi1
+
+# Install noirup
+RUN curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
+
+# Add noirup directory to PATH and ensure it's sourced
+ENV PATH="/root/.nargo/bin:${PATH}"
+RUN echo 'export PATH="$HOME/.nargo/bin:$PATH"' >> ~/.bashrc
+
+RUN bash -c "source ~/.profile && noirup"
+# ENV PATH="$PATH:/nargo/bin"
 
 WORKDIR /app
 

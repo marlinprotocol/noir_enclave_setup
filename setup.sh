@@ -15,7 +15,9 @@ iptables -L -t nat
 
 # generate identity key
 /app/keygen --secret /app/id.sec --public /app/id.pub
-/app/oyster-keygen --secretpath /app/secp.sec
 
-#starting supervisord
+# your custom setup goes here
+
+# starting supervisord
+cat /etc/supervisord.conf
 /app/supervisord
